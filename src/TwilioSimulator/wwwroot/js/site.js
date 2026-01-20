@@ -91,7 +91,7 @@ function renderMessages(messages, scrollToBottom) {
         return `
             <div class="mb-4 flex ${isInbound ? 'justify-start' : 'justify-end'}">
                 <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${isInbound ? 'bg-white border border-gray-200' : 'bg-indigo-600 text-white'}">
-                    <div class="text-sm">${escapeHtml(msg.messageBody)}</div>
+                    <div class="text-sm">${linkify(escapeHtml(msg.messageBody))}</div>
                     <div class="text-xs mt-1 ${isInbound ? 'text-gray-400' : 'text-indigo-200'}">${formatDate(msg.createdAt)}</div>
                 </div>
             </div>
@@ -155,4 +155,11 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function linkify(text) {
+    const urlRegex = /(https?:\/\/[^\s<>"']+)/gi;
+    return text.replace(urlRegex, (url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="underline hover:opacity-80">${url}</a>`;
+    });
 }
