@@ -2,7 +2,7 @@
     Layout = "_Layout";
 }
 
-<div class="flex h-screen">
+<div id="sms-panel" class="flex h-screen overflow-hidden">
     <!-- Painel Esquerdo - Lista de Contatos (20%) -->
     <div class="w-1/5 bg-white border-r border-gray-200 flex flex-col">
         <div class="p-4 border-b border-gray-200 bg-indigo-600">
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Painel Direito - Mensagens (80%) -->
-    <div class="w-4/5 flex flex-col">
+    <div class="w-4/5 flex flex-col min-w-0">
         <!-- Header -->
         <div id="chat-header" class="p-4 border-b border-gray-200 bg-white">
             <h2 class="text-lg font-semibold text-gray-700">Selecione uma conversa</h2>

@@ -8,7 +8,8 @@
       "Bash(curl:*)",
       "Bash(pkill:*)",
       "Bash(taskkill:*)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "PowerShell(Set-Location \"c:\\\\dev\\\\woolbright-w1salon-v2\\\\TwillioSimulator\\\\src\\\\TwilioSimulator\"; $env:ASPNETCORE_ENVIRONMENT=\"Development\"; dotnet run --no-build --urls \"http://localhost:5029\" 2>&1 | Out-File \"$env:TEMP\\\\emailsim.log\")"
     ]
   }
 }

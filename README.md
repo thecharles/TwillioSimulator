@@ -36,7 +36,9 @@ npm run css:build
 dotnet run
 ```
 
-The application will be available at `http://localhost:5000`
+The application will be available at `http://localhost:5030` (the `http` launch profile).
+
+> Email simulation was split out into the sibling `EmailSimulator` project (default `http://localhost:5029`).
 
 ## API Endpoints
 

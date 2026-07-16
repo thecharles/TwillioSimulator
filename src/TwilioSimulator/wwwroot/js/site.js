@@ -1,6 +1,12 @@
 let selectedPhoneNumber = null;
 let pollingInterval = null;
 
+// New-message notification tracking
+let smsLastSeen = {};
+let smsInitialized = false;
+let suppressSmsUntil = 0;
+let audioCtx = null;
+
 document.addEventListener('DOMContentLoaded', function () {
     loadConversations();
     startPolling();
@@ -9,6 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (replyForm) {
         replyForm.addEventListener('submit', handleReplySubmit);
     }
+
+    // Browsers gate audio until a user gesture — resume the context on any click.
+    document.addEventListener('click', () => {
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    });
 });
 
 function startPolling() {
@@ -24,6 +37,7 @@ async function loadConversations() {
     try {
         const response = await fetch('/api/sms/conversations');
         const conversations = await response.json();
+        detectNewSms(conversations);
         renderConversations(conversations);
     } catch (error) {
         console.error('Erro ao carregar conversas:', error);
@@ -127,6 +141,8 @@ async function handleReplySubmit(e) {
 
         if (response.ok) {
             input.value = '';
+            // Our own reply bumps the conversation — don't chime for it.
+            suppressSmsUntil = Date.now() + 5000;
             await loadMessages(selectedPhoneNumber, true);
         } else {
             const error = await response.json();
@@ -162,4 +178,61 @@ function linkify(text) {
     return text.replace(urlRegex, (url) => {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="underline hover:opacity-80">${url}</a>`;
     });
+}
+
+// ---------------------------------------------------------------------------
+// New-message notifications (sound)
+// ---------------------------------------------------------------------------
+
+function detectNewSms(conversations) {
+    if (!smsInitialized) {
+        conversations.forEach(c => { smsLastSeen[c.phoneNumber] = c.lastMessageAt; });
+        smsInitialized = true;
+        return;
+    }
+
+    let hasNew = false;
+    conversations.forEach(c => {
+        const prev = smsLastSeen[c.phoneNumber];
+        if (prev === undefined || new Date(c.lastMessageAt) > new Date(prev)) {
+            hasNew = true;
+            smsLastSeen[c.phoneNumber] = c.lastMessageAt;
+        }
+    });
+
+    if (hasNew && Date.now() > suppressSmsUntil) {
+        playNotification();
+    }
+}
+
+// Short chime synthesized via the Web Audio API (no asset file needed).
+function playNotification() {
+    try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        audioCtx = audioCtx || new Ctx();
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        // Two-note motif.
+        const notes = [880.0, 1174.66];
+        notes.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const start = audioCtx.currentTime + i * 0.16;
+            gain.gain.setValueAtTime(0.0001, start);
+            gain.gain.exponentialRampToValueAtTime(0.25, start + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.15);
+            osc.start(start);
+            osc.stop(start + 0.16);
+        });
+    } catch (error) {
+        console.error('Erro ao tocar som:', error);
+    }
 }
