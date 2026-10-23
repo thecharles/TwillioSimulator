@@ -27,6 +27,9 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStaticFiles();
 
+// Liveness probe for DigitalOcean App Platform.
+app.MapGet("/healthz", () => Results.Ok("ok"));
+
 app.UseRouting();
 
 app.UseAuthorization();

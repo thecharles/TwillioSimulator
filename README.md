@@ -12,7 +12,7 @@ A web-based Twilio SMS simulator built with ASP.NET Core MVC and TailwindCSS. De
 
 ## Requirements
 
-- .NET 8.0 SDK
+- .NET 10 SDK
 - Node.js (for TailwindCSS)
 
 ## Getting Started
@@ -179,3 +179,14 @@ dotnet watch run
 - Data is stored in-memory and will be lost when the application restarts
 - The UI auto-refreshes every 3 seconds to show new messages
 - Phone numbers should be in international format (e.g., +5511999887766)
+
+## Deployment
+
+Deployed to DigitalOcean App Platform at **https://simulator-sms.colbek.app** (app `simulator-sms`,
+built from the `Dockerfile` in this repo). Every push to `main` redeploys it, and because storage is
+in-memory, every deploy or restart wipes all conversations. `GET /healthz` is the health check.
+
+```bash
+docker build -t twilio-simulator .
+docker run --rm -p 8080:8080 twilio-simulator   # http://localhost:8080
+```
