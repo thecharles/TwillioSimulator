@@ -1,0 +1,35 @@
+# DigitalOcean App Platform spec for simulator-sms.colbek.app
+# Apply changes with: doctl apps update <app-id> --spec deploy/app-spec.yml
+name: simulator-sms
+region: nyc
+domains:
+  - domain: simulator-sms.colbek.app
+    type: PRIMARY
+    zone: colbek.app
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+ingress:
+  rules:
+    - component:
+        name: twilio-simulator
+      match:
+        path:
+          prefix: /
+services:
+  - name: twilio-simulator
+    github:
+      repo: thecharles/TwillioSimulator
+      branch: main
+      deploy_on_push: true
+    source_dir: /
+    dockerfile_path: Dockerfile
+    http_port: 8080
+    instance_count: 1   # must stay 1: storage is in-memory, per instance
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    health_check:
+      http_path: /healthz
+    envs:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+        scope: RUN_TIME
