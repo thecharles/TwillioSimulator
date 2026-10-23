@@ -8,4 +8,5 @@ public interface ISmsService
     Task<List<ConversationDto>> GetConversationsAsync();
     Task<List<MessageDto>> GetMessagesByPhoneAsync(string phoneNumber);
     Task<bool> SendReplyAsync(string phoneNumber, string messageBody);
+    Task<int> ClearAllAsync();
 }

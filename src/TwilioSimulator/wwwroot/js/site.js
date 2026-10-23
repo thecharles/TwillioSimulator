@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', function () {
         replyForm.addEventListener('submit', handleReplySubmit);
     }
 
+    const clearButton = document.getElementById('clear-button');
+    if (clearButton) {
+        clearButton.addEventListener('click', handleClearAll);
+    }
+
     // Browsers gate audio until a user gesture — resume the context on any click.
     document.addEventListener('click', () => {
         if (audioCtx && audioCtx.state === 'suspended') {
@@ -151,6 +156,38 @@ async function handleReplySubmit(e) {
     } catch (error) {
         console.error('Erro ao enviar resposta:', error);
         alert('Erro ao enviar resposta');
+    }
+}
+
+async function handleClearAll() {
+    if (!confirm('Apagar todas as conversas e mensagens?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/sms/conversations', { method: 'DELETE' });
+        if (!response.ok) {
+            alert('Erro ao limpar mensagens');
+            return;
+        }
+
+        selectedPhoneNumber = null;
+        smsLastSeen = {};
+
+        document.getElementById('chat-header').innerHTML = `
+            <h2 class="text-lg font-semibold text-gray-700">Selecione uma conversa</h2>
+        `;
+        document.getElementById('messages-container').innerHTML = `
+            <div class="flex items-center justify-center h-full text-gray-400">
+                <p>Selecione um contato para ver as mensagens</p>
+            </div>
+        `;
+        document.getElementById('reply-container').classList.add('hidden');
+
+        await loadConversations();
+    } catch (error) {
+        console.error('Erro ao limpar mensagens:', error);
+        alert('Erro ao limpar mensagens');
     }
 }
 

@@ -148,4 +148,19 @@ public class SmsService : ISmsService
 
         return true;
     }
+
+    public async Task<int> ClearAllAsync()
+    {
+        var messages = await _context.SmsMessages.ToListAsync();
+        var conversations = await _context.Conversations.ToListAsync();
+
+        _context.SmsMessages.RemoveRange(messages);
+        _context.Conversations.RemoveRange(conversations);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Cleared {Messages} messages in {Conversations} conversations",
+            messages.Count, conversations.Count);
+
+        return messages.Count;
+    }
 }

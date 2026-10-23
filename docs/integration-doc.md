@@ -137,4 +137,5 @@ Operator types reply in UI ─────▶ Simulator ──POST callbackUrl�
 | GET | `/api/sms/conversations` | List conversations |
 | GET | `/api/sms/messages/{phoneNumber}` | Messages in a conversation |
 | POST | `/api/sms/reply` | Send an operator reply (fires callback) |
+| DELETE | `/api/sms/conversations` | Clear all conversations and messages (UI **Limpar** button) |
 | — | *your* `callbackUrl` | Simulator posts replies back to you |

@@ -34,6 +34,13 @@ public class SmsApiController : ControllerBase
         return Ok(conversations);
     }
 
+    [HttpDelete("conversations")]
+    public async Task<IActionResult> ClearAll()
+    {
+        var deleted = await _smsService.ClearAllAsync();
+        return Ok(new { deleted });
+    }
+
     [HttpGet("messages/{phoneNumber}")]
     public async Task<IActionResult> GetMessages(string phoneNumber)
     {

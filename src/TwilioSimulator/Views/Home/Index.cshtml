@@ -5,8 +5,14 @@
 <div id="sms-panel" class="flex h-screen overflow-hidden">
     <!-- Painel Esquerdo - Lista de Contatos (20%) -->
     <div class="w-1/5 bg-white border-r border-gray-200 flex flex-col">
-        <div class="p-4 border-b border-gray-200 bg-indigo-600">
+        <div class="p-4 border-b border-gray-200 bg-indigo-600 flex items-center justify-between gap-2">
             <h1 class="text-lg font-semibold text-white">Twilio Simulator</h1>
+            <button type="button"
+                    id="clear-button"
+                    title="Apagar todas as conversas e mensagens"
+                    class="px-3 py-1 text-sm text-white border border-white/40 rounded-md hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white transition-colors">
+                Limpar
+            </button>
         </div>
         <div id="contacts-list" class="flex-1 overflow-y-auto">
             <div class="p-4 text-gray-500 text-center text-sm">

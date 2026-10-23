@@ -124,6 +124,14 @@ When a reply is sent, the simulator will POST to the `callbackUrl` with the foll
 }
 ```
 
+### Clear All Conversations
+
+```http
+DELETE /api/sms/conversations
+```
+
+Deletes every conversation and message (the **Limpar** button in the UI). Response: `{ "deleted": 12 }` (number of messages removed).
+
 ## Project Structure
 
 ```
